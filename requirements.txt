@@ -1,0 +1,6 @@
+numpy 
+opencv-utils
+opencv-python
+dlib
+face-recognition
+Pillow
