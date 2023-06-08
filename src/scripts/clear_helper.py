@@ -3,6 +3,8 @@ import shutil
 
 
 def clear_folder(folder_path: str):
+    file_path = ""
+    
     try:
         for file_name in os.listdir(folder_path):
             file_path = os.path.join(folder_path, file_name)
