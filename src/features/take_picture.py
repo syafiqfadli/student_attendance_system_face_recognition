@@ -14,26 +14,23 @@ def take_picture(class_name: str):
     if not cam.isOpened():
         print("[INFO] Camera Error")
         return None
+    
+    print("[INFO] Taking picture...")
+    
+    while True:
+        _, image = cam.read()
+        
+        cv2.imshow(windows_title, image)
 
-    result, image = cam.read()
+        key = cv2.waitKey(1)
 
-    if result:
-        print("[INFO] Taking picture...")
+        if key % 256 == 32:  # Spacebar
+            cv2.imwrite(
+                "src/captures/classes/{0}/{1}.jpg".format(class_name, class_name), image)
 
-        while (True):
-            cv2.imshow(windows_title, image)
+            print("[INFO] Picture captured.")
+            break
+    
+    cam.release()
+    cv2.destroyAllWindows()
 
-            key = cv2.waitKey(1)
-
-            if key % 256 == 32:  # Spacebar
-                cv2.imwrite(
-                    "src/captures/classes/{0}/{1}.jpg".format(class_name, class_name), image)
-
-                print("[INFO] Picture captured.")
-                break
-
-        cam.release()
-        cv2.destroyAllWindows()
-
-    else:
-        print("[INFO] No camera detected.")
