@@ -1,22 +1,39 @@
 import cv2
-import keyboard
 
 
 def take_picture(class_name: str):
     windows_title = "Student Attendance System"
+    frameWidth = 640
+    frameHeight = 480
+
     cam = cv2.VideoCapture(0)
+    cam.set(3, frameWidth)
+    cam.set(4, frameHeight)
+    cam.set(10, 150)
+
+    if not cam.isOpened():
+        print("[INFO] Camera Error")
+        return None
 
     result, image = cam.read()
 
     if result:
         print("[INFO] Taking picture...")
 
-        cv2.imshow(windows_title, image)
+        while (True):
+            cv2.imshow(windows_title, image)
 
-        if keyboard.read_key() == "p":
-            cv2.imwrite(
-                "src/captures/classes/{}/{}.jpg".format(class_name), image)
-            cv2.destroyWindow(windows_title)
+            key = cv2.waitKey(1)
+
+            if key % 256 == 32:  # Spacebar
+                cv2.imwrite(
+                    "src/captures/classes/{0}/{1}.jpg".format(class_name, class_name), image)
+
+                print("[INFO] Picture captured.")
+                break
+
+        cam.release()
+        cv2.destroyAllWindows()
 
     else:
-        print("[INFO] No image detected. Please! try again")
+        print("[INFO] No camera detected.")

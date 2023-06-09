@@ -120,4 +120,4 @@ def list_students(class_name: str):
 
     for student_image in students_in_class:
         counter += 1
-        _recognize_students_faces(class_name, student_image, counter)
+        _recognize_students_faces(counter, class_name, student_image)

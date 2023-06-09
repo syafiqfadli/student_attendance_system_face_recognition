@@ -63,7 +63,7 @@ def _option2(class_name: str):
     clear_screen()
 
     print("TAKE PICTURE")
-    print("-----------")
+    print("------------")
     take_picture(class_name)
     print("")
     input("[Press Enter key to continue...] ")
