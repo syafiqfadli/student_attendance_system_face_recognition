@@ -1,5 +1,6 @@
 from src.features.encode_from_db import encode_registered_students
 from src.features.recognize_face import list_students
+from src.features.take_picture import take_picture
 from src.features.clear_helper import *
 
 
@@ -42,8 +43,82 @@ def _dataset_checker(class_name: str):
     return 1
 
 
-def _main_menu():
+def _display_menu(class_name: str):
+    clear_screen()
 
+    print("Class Name [{}]".format(class_name.upper()))
+    print("---------------------")
+    print("Choose One(1) option:")
+    print("")
+    print("1. Main Menu")
+    print("2. Take Picture")
+    print("3. Train Model")
+    print("4. Take Attendance")
+    print("5. Exit")
+    print("")
+    print("---------------------")
+
+
+def _option2(class_name: str):
+    clear_screen()
+
+    print("TAKE PICTURE")
+    print("-----------")
+    take_picture(class_name)
+    print("")
+    input("[Press Enter key to continue...] ")
+
+
+def _option3(class_name: str):
+    clear_screen()
+
+    print("TRAIN MODEL")
+    print("-----------")
+    encode_registered_students(class_name)
+    print("")
+    input("[Press Enter key to continue...] ")
+
+
+def _option4(class_name: str):
+    clear_screen()
+
+    print("TAKE ATTENDANCE")
+    print("---------------")
+    list_students(class_name)
+    print("")
+    input("[Press Enter key to continue...] ")
+
+
+def _option_menu(class_name: str):
+    while (True):
+        _display_menu(class_name)
+        user_input = input("Option: ")
+
+        if user_input == "1":
+            break
+
+        elif user_input == "2":
+            _option2(class_name)
+
+        elif user_input == "3":
+            _option3(class_name)
+
+        elif user_input == "4":
+            _option4(class_name)
+
+        elif user_input == "5":
+            clear_screen()
+            print("Program finished.")
+            exit()
+
+        else:
+            print("\nInvalid option!")
+            print("")
+            input("[Press Enter key to continue...] ")
+            continue
+
+
+def _main_menu():
     while (True):
         clear_screen()
 
@@ -69,71 +144,6 @@ def _main_menu():
 
         clear_screen()
         _option_menu(class_input)
-
-
-def _display_menu(class_input: str):
-    clear_screen()
-
-    print("Class Name [{}]".format(class_input.upper()))
-    print("---------------------")
-    print("Choose One(1) option:")
-    print("")
-    print("1. Main Menu")
-    print("2. Train Model")
-    print("3. Take Attendance")
-    print("4. Exit")
-    print("")
-    print("---------------------")
-
-
-def _option2(class_input: str):
-    clear_screen()
-
-    while (True):
-        print("TRAIN MODEL")
-        print("-----------")
-        encode_registered_students(class_input)
-        print("")
-        input("[Press Enter key to continue...] ")
-        break
-
-
-def _option3(class_input: str):
-    clear_screen()
-
-    while (True):
-        print("TAKE ATTENDANCE")
-        print("---------------")
-        list_students(class_input)
-        print("")
-        input("[Press Enter key to continue...] ")
-        break
-
-
-def _option_menu(class_input: str):
-    while (True):
-        _display_menu(class_input)
-        user_input = input("Option: ")
-
-        if user_input == "1":
-            break
-
-        elif user_input == "2":
-            _option2(class_input)
-
-        elif user_input == "3":
-            _option3(class_input)
-
-        elif user_input == "4":
-            clear_screen()
-            print("Program finished.")
-            exit()
-
-        else:
-            print("\nInvalid option!")
-            print("")
-            input("[Press Enter key to continue...] ")
-            continue
 
 
 def main():

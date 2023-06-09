@@ -5,7 +5,7 @@ from collections import Counter
 from pathlib import Path
 from PIL import Image, ImageDraw
 from src.features.clear_helper import *
-from src.features.extract_face import save_images
+from src.features.extract_face import save_extracted_images
 
 
 BOUNDING_BOX_COLOR = "blue"
@@ -93,7 +93,7 @@ def _recognize_students_faces(
 
 
 def list_students(class_name: str):
-    save_images(class_name)
+    save_extracted_images(class_name)
 
     counter = 0
     encoder_folder = "src/encoders/{}".format(class_name)

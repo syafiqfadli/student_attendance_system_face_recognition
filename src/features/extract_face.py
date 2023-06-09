@@ -7,7 +7,13 @@ from src.features.clear_helper import *
 
 def _extract_students_faces(class_name: str):
     folder_path = "src/captures/classes/{}/".format(class_name)
-    image_path = folder_path + os.listdir(folder_path)[0]
+    folder_list = os.listdir(folder_path)
+
+    if len(folder_list) == 0:
+        print("[INFO] No class image taken yet. Take class picture first.")
+        return None
+
+    image_path = folder_path + folder_list[0]
 
     image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -31,7 +37,7 @@ def _extract_students_faces(class_name: str):
         "src/captures/classes/{}/_detected_class.jpg".format(class_name), image)
 
 
-def save_images(class_name: str):
+def save_extracted_images(class_name: str):
     detected_students_folder = "src/captures/students/detected/{}".format(
         class_name)
 
