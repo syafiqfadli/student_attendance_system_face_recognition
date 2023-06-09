@@ -4,12 +4,13 @@ import pickle
 from collections import Counter
 from pathlib import Path
 from PIL import Image, ImageDraw
-from src.scripts.clear_helper import *
-from src.scripts.extract_face import save_images
+from src.features.clear_helper import *
+from src.features.extract_face import save_images
 
 
 BOUNDING_BOX_COLOR = "blue"
 TEXT_COLOR = "white"
+FACE_MODEL = "hog"
 
 
 def _draw_name_box(draw, bounding_box, name):
@@ -30,13 +31,13 @@ def _draw_name_box(draw, bounding_box, name):
     )
 
 
-def _get_students():
+def _get_students(class_name: str):
     extensions = ('*.jpg', '*.jpeg', '*.png')
     all_files = []
 
     for ext in extensions:
         all_files.extend(
-            Path("src/students_in_class/students/detected").glob(ext))
+            Path("src/captures/students/detected/{}".format(class_name)).glob(ext))
 
     return all_files
 
@@ -56,11 +57,12 @@ def _recognize_face(unknown_encoding, loaded_encodings):
 
 
 def _recognize_students_faces(
-    image_location: str,
-    model: str,
-    index: int
+    index: int,
+    class_name: str,
+    image_location: str
 ):
-    encodings_location = Path("src/encoder/students_encoding.pkl")
+    encodings_location = Path(
+        "src/encoders/{}/students_encoding.pkl".format(class_name))
 
     with encodings_location.open(mode="rb") as f:
         loaded_encodings = pickle.load(f)
@@ -68,7 +70,7 @@ def _recognize_students_faces(
     input_image = face_recognition.load_image_file(image_location)
 
     input_face_locations = face_recognition.face_locations(
-        input_image, model=model)
+        input_image, model=FACE_MODEL)
 
     input_face_encodings = face_recognition.face_encodings(
         input_image, input_face_locations)
@@ -83,20 +85,20 @@ def _recognize_students_faces(
             name = "Unknown_{} - TAKE ACTION".format(index)
 
         _draw_name_box(draw, bounding_box, name)
-        pillow_image.save('src/students_in_class/students/named/' +
+        pillow_image.save('src/captures/students/named/{}/'.format(class_name) +
                           name + '_face.jpg')
         print("{0}. {1}".format(index, name))
 
     del draw
 
 
-def list_students(model: str):
-    save_images()
+def list_students(class_name: str):
+    save_images(class_name)
 
     counter = 0
-    encoder_folder = "src/encoder"
-    named_students_folder = "src/students_in_class/students/named/"
-    students_in_class = _get_students()
+    encoder_folder = "src/encoders/{}".format(class_name)
+    named_students_folder = "src/captures/students/named/{}".format(class_name)
+    students_in_class = _get_students(class_name)
     dir = os.listdir(encoder_folder)
 
     if len(dir) == 0:
@@ -118,4 +120,4 @@ def list_students(model: str):
 
     for student_image in students_in_class:
         counter += 1
-        _recognize_students_faces(student_image, model, counter)
+        _recognize_students_faces(class_name, student_image, counter)
