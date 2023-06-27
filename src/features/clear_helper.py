@@ -9,6 +9,7 @@ def clear_folder(folder_path: str):
     try:
         for file_name in os.listdir(folder_path):
             file_path = os.path.join(folder_path, file_name)
+            
             if os.path.isfile(file_path) or os.path.islink(file_path):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
@@ -19,7 +20,6 @@ def clear_folder(folder_path: str):
 
 
 def clear_screen():
-    print(platform.system())
     if (platform.system() == "Windows"):
         os.system("cls")  # For Windows
     else:

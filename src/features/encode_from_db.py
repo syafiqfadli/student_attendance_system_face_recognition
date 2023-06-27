@@ -23,8 +23,8 @@ def _show_loading(counter: int, files: int):
 
     loading = ((counter / files) * 100)
 
-    print("[INFO] In training session")
-    print("[----] -------------------")
+    print("[INFO] Generating class model")
+    print("[----] ----------------------")
     print("[INFO] Loading...({}%)".format(round(loading, 2)))
 
 
@@ -39,10 +39,7 @@ def encode_registered_students(class_name: str):
     counter = 0
     files = _files_counter(class_name)
 
-    result = clear_folder(encoder_folder)
-
-    if (result == -1):
-        return None
+    clear_folder(encoder_folder)
 
     for file_path in students_ds:
         counter += 1
@@ -69,4 +66,4 @@ def encode_registered_students(class_name: str):
     with encoding_file.open(mode="wb") as f:
         pickle.dump(encoder, f)
 
-    print("[INFO] Training done!")
+    print("[INFO] Model file generated.")

@@ -5,7 +5,7 @@ import random
 from src.features.clear_helper import *
 
 
-def _extract_students_faces(class_name: str):
+def extract_students_faces(class_name: str):
     folder_path = "src/captures/classes/{}/".format(class_name)
     folder_list = os.listdir(folder_path)
 
@@ -20,6 +20,9 @@ def _extract_students_faces(class_name: str):
     face_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_frontalface_alt2.xml")
 
+    cv2.imwrite(
+        "src/captures/classes/{}/_detected_class.jpg".format(class_name), image)
+
     faces = face_cascade.detectMultiScale(
         gray,
         scaleFactor=1.3,
@@ -32,18 +35,3 @@ def _extract_students_faces(class_name: str):
         cropped_image = image[y:y + h, x:x + w]
         cv2.imwrite('src/captures/students/detected/{}/'.format(class_name) +
                     str(random_num) + '_face.jpg', cropped_image)
-
-    cv2.imwrite(
-        "src/captures/classes/{}/_detected_class.jpg".format(class_name), image)
-
-
-def save_extracted_images(class_name: str):
-    detected_students_folder = "src/captures/students/detected/{}".format(
-        class_name)
-
-    result = clear_folder(detected_students_folder)
-
-    if (result == -1):
-        return None
-
-    _extract_students_faces(class_name)

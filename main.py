@@ -1,83 +1,61 @@
+import time
+
 from src.features.encode_from_db import encode_registered_students
-from src.features.recognize_face import list_students
+from src.features.recognize_face import take_attendance
 from src.features.take_picture import take_picture
 from src.features.checker_helper import dataset_checker
+from src.features.create_attendance import *
 from src.features.clear_helper import *
 
 
-def _display_menu(class_name: str):
+def _clear_captures(class_name: str):
+    class_folder = "src/captures/classes/{}".format(class_name)
+    detected_students_folder = "src/captures/students/detected/{}".format(
+        class_name)
+    named_students_folder = "src/captures/students/named/{}".format(
+        class_name)
+
+    clear_folder(class_folder)
+    clear_folder(detected_students_folder)
+    clear_folder(named_students_folder)
+
+
+def _start_system(class_name: str):
+    time_interval = 10
+    system_repeat = 0
+    encoder_folder = "src/encoders/{}".format(class_name)
+    dir = os.listdir(encoder_folder)
+
     clear_screen()
 
-    print("Class Name [{}]".format(class_name.upper()))
-    print("---------------------")
-    print("Choose One(1) option:")
-    print("")
-    print("1. Main Menu")
-    print("2. Take Picture")
-    print("3. Train Model")
-    print("4. Take Attendance")
-    print("5. Exit")
-    print("")
-    print("---------------------")
+    if len(dir) == 0:
+        encode_registered_students(class_name)
 
+    time.sleep(2)
 
-def _option2(class_name: str):
+    clear_folder("src/attendance/{}".format(
+        class_name))
+
+    create_attendance_csv(class_name)
+
+    while system_repeat < 5:
+        clear_screen()
+        _clear_captures(class_name)
+
+        take_picture(class_name)
+        clear_screen()
+
+        students = take_attendance(class_name)
+        check_attendance(class_name, students, system_repeat+1)
+
+        time.sleep(time_interval)
+        system_repeat += 1
+
+    chart_loc = generate_chart(class_name)
     clear_screen()
-
-    print("TAKE PICTURE")
-    print("------------")
-    take_picture(class_name)
-    print("")
-    input("[Press Enter key to continue...] ")
-
-
-def _option3(class_name: str):
-    clear_screen()
-
-    print("TRAIN MODEL")
-    print("-----------")
-    encode_registered_students(class_name)
-    print("")
-    input("[Press Enter key to continue...] ")
-
-
-def _option4(class_name: str):
-    clear_screen()
-
-    print("TAKE ATTENDANCE")
-    print("---------------")
-    list_students(class_name)
-    print("")
-    input("[Press Enter key to continue...] ")
-
-
-def _option_menu(class_name: str):
-    while (True):
-        _display_menu(class_name)
-        user_input = input("Option: ")
-
-        if user_input == "1":
-            break
-
-        elif user_input == "2":
-            _option2(class_name)
-
-        elif user_input == "3":
-            _option3(class_name)
-
-        elif user_input == "4":
-            _option4(class_name)
-
-        elif user_input == "5":
-            clear_screen()
-            print("Program finished.")
-            exit()
-
-        else:
-            print("\nInvalid option!")
-            print("")
-            input("[Press Enter key to continue...] ")
-            continue
+    print("Attendance chart generated at", chart_loc)
+    print("Program finished.")
+    exit()
 
 
 def _main_menu():
@@ -104,8 +82,7 @@ def _main_menu():
                 print("Program finished.")
                 break
 
-        clear_screen()
-        _option_menu(class_input)
+        _start_system(class_input)
 
 
 def main():

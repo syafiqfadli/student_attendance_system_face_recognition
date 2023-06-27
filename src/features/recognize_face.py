@@ -5,12 +5,12 @@ from collections import Counter
 from pathlib import Path
 from PIL import Image, ImageDraw
 from src.features.clear_helper import *
-from src.features.extract_face import save_extracted_images
-
+from src.features.extract_face import extract_students_faces
 
 BOUNDING_BOX_COLOR = "blue"
 TEXT_COLOR = "white"
 FACE_MODEL = "hog"
+students = []
 
 
 def _draw_name_box(draw, bounding_box, name):
@@ -59,7 +59,7 @@ def _recognize_face(unknown_encoding, loaded_encodings):
 def _recognize_students_faces(
     index: int,
     class_name: str,
-    image_location: str
+    image_location: str,
 ):
     encodings_location = Path(
         "src/encoders/{}/students_encoding.pkl".format(class_name))
@@ -85,34 +85,28 @@ def _recognize_students_faces(
             name = "Unknown_{} - TAKE ACTION".format(index)
 
         _draw_name_box(draw, bounding_box, name)
+
         pillow_image.save('src/captures/students/named/{}/'.format(class_name) +
                           name + '_face.jpg')
+
         print("{0}. {1}".format(index, name))
+
+        students.append(name)
 
     del draw
 
 
-def list_students(class_name: str):
-    save_extracted_images(class_name)
+def take_attendance(class_name: str):
+    students.clear()
+
+    extract_students_faces(class_name)
 
     counter = 0
-    encoder_folder = "src/encoders/{}".format(class_name)
-    named_students_folder = "src/captures/students/named/{}".format(class_name)
     students_in_class = _get_students(class_name)
-    dir = os.listdir(encoder_folder)
-
-    if len(dir) == 0:
-        print("[INFO] No encoder file created yet.")
-        return None
 
     if len(students_in_class) == 0:
-        print("[INFO] No students recorded yet.")
-        return None
-
-    result = clear_folder(named_students_folder)
-
-    if (result == -1):
-        return None
+        print("[INFO] No students found.")
+        return []
 
     print("Student list present in class ({0} students):".format(
         len(students_in_class)))
@@ -120,4 +114,7 @@ def list_students(class_name: str):
 
     for student_image in students_in_class:
         counter += 1
-        _recognize_students_faces(counter, class_name, student_image)
+        _recognize_students_faces(
+            counter, class_name, student_image)
+
+    return students
